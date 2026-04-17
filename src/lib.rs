@@ -7,9 +7,7 @@
 //! # embassy-ssd1306
 //!
 //! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
-//! Attention pour l'instant il est possible que d'afficher des nombres 
-// sur les pages 0 à 7 prochain update les lettres .Optimisé pour l'exécuteur `embassy`.
-//!
+//! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7.
 //! Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 //! (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
 //! optimisé page par page.
@@ -39,8 +37,9 @@ pub const SCREEN_HEIGHT: usize = 64;
 /// Nombre de pages (1 page = 8 pixels de hauteur).
 pub const PAGES: usize = SCREEN_HEIGHT / 8;
 
-/// Font 5x7 — chiffres 0-9, signe moins, espace
-const FONT: [[u8; 5]; 12] = [
+/// Font 5x7 — chiffres 0-9, signe moins, espace 
+///Changement majeur pour les lettres 
+const FONT: [[u8; 5]; 38] = [
     [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
     [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
     [0x42, 0x61, 0x51, 0x49, 0x46], // 2
@@ -53,6 +52,33 @@ const FONT: [[u8; 5]; 12] = [
     [0x06, 0x49, 0x49, 0x29, 0x1E], // 9
     [0x08, 0x08, 0x08, 0x08, 0x08], // 10 = '-'
     [0x00, 0x00, 0x00, 0x00, 0x00], // 11 = ' '
+    // Lettres A–Z (index 12–37)
+    [0x7E, 0x11, 0x11, 0x11, 0x7E], // 12 = 'A'
+    [0x7F, 0x49, 0x49, 0x49, 0x36], // 13 = 'B'
+    [0x3E, 0x41, 0x41, 0x41, 0x22], // 14 = 'C'
+    [0x7F, 0x41, 0x41, 0x22, 0x1C], // 15 = 'D'
+    [0x7F, 0x49, 0x49, 0x49, 0x41], // 16 = 'E'
+    [0x7F, 0x09, 0x09, 0x09, 0x01], // 17 = 'F'
+    [0x3E, 0x41, 0x49, 0x49, 0x7A], // 18 = 'G'
+    [0x7F, 0x08, 0x08, 0x08, 0x7F], // 19 = 'H'
+    [0x00, 0x41, 0x7F, 0x41, 0x00], // 20 = 'I'
+    [0x20, 0x40, 0x41, 0x3F, 0x01], // 21 = 'J'
+    [0x7F, 0x08, 0x14, 0x22, 0x41], // 22 = 'K'
+    [0x7F, 0x40, 0x40, 0x40, 0x40], // 23 = 'L'
+    [0x7F, 0x02, 0x0C, 0x02, 0x7F], // 24 = 'M'
+    [0x7F, 0x04, 0x08, 0x10, 0x7F], // 25 = 'N'
+    [0x3E, 0x41, 0x41, 0x41, 0x3E], // 26 = 'O'
+    [0x7F, 0x09, 0x09, 0x09, 0x06], // 27 = 'P'
+    [0x3E, 0x41, 0x51, 0x21, 0x5E], // 28 = 'Q'
+    [0x7F, 0x09, 0x19, 0x29, 0x46], // 29 = 'R'
+    [0x46, 0x49, 0x49, 0x49, 0x31], // 30 = 'S'
+    [0x01, 0x01, 0x7F, 0x01, 0x01], // 31 = 'T'
+    [0x3F, 0x40, 0x40, 0x40, 0x3F], // 32 = 'U'
+    [0x1F, 0x20, 0x40, 0x20, 0x1F], // 33 = 'V'
+    [0x3F, 0x40, 0x38, 0x40, 0x3F], // 34 = 'W'
+    [0x63, 0x14, 0x08, 0x14, 0x63], // 35 = 'X'
+    [0x07, 0x08, 0x70, 0x08, 0x07], // 36 = 'Y'
+    [0x61, 0x51, 0x49, 0x45, 0x43], // 37 = 'Z'
 ];
 
 /// Instance principale du driver SSD1306.
@@ -202,7 +228,7 @@ impl<I: I2c> Ssd1306<I> {
     // Texte 
 
     /// Dessine un glyphe 5x7 dans le framebuffer à la position (x, page).
-    /// `glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ').
+    /// `glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z').
     pub fn draw_char(&mut self, x: u8, page: u8, glyph_idx: usize) {
         for col in 0..5usize {
             let byte = FONT[glyph_idx][col];
@@ -239,6 +265,33 @@ impl<I: I2c> Ssd1306<I> {
         }
         x
     }
+
+    /// Convertit un caractère ASCII en index dans la table FONT.
+   /// Retourne `None` si le caractère n'est pas supporté.
+   fn char_to_glyph(c: u8) -> Option<usize> {
+    match c {
+        b'0'..=b'9' => Some((c - b'0') as usize),
+        b'-'        => Some(10),
+        b' '        => Some(11),
+        b'A'..=b'Z' => Some((c - b'A') as usize + 12),
+        b'a'..=b'z' => Some((c - b'a') as usize + 12), // minuscules → mêmes glyphes
+        _           => None,
+      }
+   }
+
+   /// Affiche une chaîne ASCII à la position (x, page).
+   /// Seuls les caractères supportés sont affichés ; les autres sont ignorés.
+  /// Retourne la coordonnée X après le dernier caractère écrit.
+   pub fn draw_str(&mut self, mut x: u8, page: u8, text: &[u8]) -> u8 {
+     for &c in text {
+        if let Some(idx) = Self::char_to_glyph(c) {
+            self.draw_char(x, page, idx);
+        }
+        x = x.saturating_add(6);
+      }
+        x
+    }
+
 
     // Flush
     /// Envoie le framebuffer complet vers l'écran via I2C.
