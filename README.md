@@ -8,6 +8,9 @@ optimisé page par page.
 Optimisé pour l'exécuteur `embassy`.
 
 
+# Update La version 0.2.1 introduit le caractere .
+Il y aura un espace après le point c'est volontaire pour pas complexifier les fonctions .
+
 # Update La version 0.2.0 introduit l'affichage des lettres .
 Par défaut en majuscules pour plus de simplicite et pragmatisme.
 

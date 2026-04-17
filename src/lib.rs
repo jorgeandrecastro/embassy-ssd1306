@@ -7,7 +7,7 @@
 //! # embassy-ssd1306
 //!
 //! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
-//! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7.
+//! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7 ainsi que le point .
 //! Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 //! (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
 //! optimisé page par page.
@@ -37,9 +37,9 @@ pub const SCREEN_HEIGHT: usize = 64;
 /// Nombre de pages (1 page = 8 pixels de hauteur).
 pub const PAGES: usize = SCREEN_HEIGHT / 8;
 
-/// Font 5x7 — chiffres 0-9, signe moins, espace 
+/// Font 5x7 — chiffres 0-9, signe moins, espace, lettres A-Z, point.
 ///Changement majeur pour les lettres 
-const FONT: [[u8; 5]; 38] = [
+const FONT: [[u8; 5]; 39] = [
     [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
     [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
     [0x42, 0x61, 0x51, 0x49, 0x46], // 2
@@ -79,6 +79,7 @@ const FONT: [[u8; 5]; 38] = [
     [0x63, 0x14, 0x08, 0x14, 0x63], // 35 = 'X'
     [0x07, 0x08, 0x70, 0x08, 0x07], // 36 = 'Y'
     [0x61, 0x51, 0x49, 0x45, 0x43], // 37 = 'Z'
+    [0x00, 0x00, 0x60, 0x60, 0x00], // 38 = '.'
 ];
 
 /// Instance principale du driver SSD1306.
@@ -228,7 +229,7 @@ impl<I: I2c> Ssd1306<I> {
     // Texte 
 
     /// Dessine un glyphe 5x7 dans le framebuffer à la position (x, page).
-    /// `glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z').
+    ///`glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z', 38 = '.')
     pub fn draw_char(&mut self, x: u8, page: u8, glyph_idx: usize) {
         for col in 0..5usize {
             let byte = FONT[glyph_idx][col];
@@ -275,6 +276,7 @@ impl<I: I2c> Ssd1306<I> {
         b' '        => Some(11),
         b'A'..=b'Z' => Some((c - b'A') as usize + 12),
         b'a'..=b'z' => Some((c - b'a') as usize + 12), // minuscules → mêmes glyphes
+        b'.' => Some(38),
         _           => None,
       }
    }
