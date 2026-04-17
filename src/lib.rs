@@ -7,7 +7,8 @@
 //! # embassy-ssd1306
 //!
 //! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
-//! Développé pour le Kernel JC-OS, optimisé pour l'exécuteur `embassy`.
+//! Attention pour l'instant il est possible que d'afficher des nombres 
+// sur les pages 0 à 7 prochain update les lettres .Optimisé pour l'exécuteur `embassy`.
 //!
 //! Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 //! (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C

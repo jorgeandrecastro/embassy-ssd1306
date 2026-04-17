@@ -1,6 +1,6 @@
 # embassy-ssd1306
 
-Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.  
+Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.  Attention pour l'instant il est possible que d'afficher des nombres sur les pages 0 à 7 prochain update les lettres .
 Optimisé pour l'exécuteur `embassy`.
 
 # Introduction de #![forbid(unsafe_code)] pour du safety.
@@ -9,7 +9,7 @@ Optimisé pour l'exécuteur `embassy`.
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.1.1"
+embassy-ssd1306 = "0.1.2"
 ```
 
 ```rust
