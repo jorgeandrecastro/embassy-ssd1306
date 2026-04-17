@@ -23,7 +23,7 @@ L'objectif c'est de ne pas alourdir le binaire avec des features pas optimales p
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.2.0"
+embassy-ssd1306 = "0.2.2"
 ```
 
 ```rust
