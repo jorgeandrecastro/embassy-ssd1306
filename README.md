@@ -173,8 +173,7 @@ async fn system_task(
 
 ````
 
-# Exemple version 0.2.0 
-**Exemple d'utilisation**
+# Exemple d'utilisation
 
 ```rust
 use embassy_ssd1306::Ssd1306;
@@ -312,7 +311,7 @@ heapless = "0.8.0"
 hd44780-i2c-nostd = "0.3.0"
 embedded-sqrt = "0.2.0"
 static_cell = "2.1.1"
-embassy-ssd1306 = "0.2.2"
+embassy-ssd1306 = "0.2.4"
 
 [profile.release]
 opt-level = "s"
