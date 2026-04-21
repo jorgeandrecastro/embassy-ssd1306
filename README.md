@@ -1,3 +1,9 @@
+
+[![crates.io](https://img.shields.io/crates/v/embassy-ssd1306.svg)](https://crates.io/crates/embassy-ssd1306)
+[![docs.rs](https://docs.rs/embassy-ssd1306/badge.svg)](https://docs.rs/embassy-ssd1306)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
+
 # embassy-ssd1306
 
 Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C, testé sur la pico 2 et pico 2040.
@@ -7,15 +13,14 @@ Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 optimisé page par page.
 Optimisé pour l'exécuteur `embassy`.
 
-# Update La versio 0.2.3 introduit un exemple testé sur la pico 2040
+# 📋 Historique et Évolutions (Changelog)
+Ce projet suit une philosophie de développement pragmatique : chaque mise à jour vise à enrichir les fonctionnalités tout en minimisant l'empreinte mémoire sur le microcontrôleur.
 
-# Update La version 0.2.1 introduit le caractere .
-Il y aura un espace après le point c'est volontaire pour pas complexifier les fonctions .
+Dernière version : v0.2.4 Amélioration majeure de la compatibilité pour la Raspberry Pi Pico 2 (RP2350) avec [dependencies.embassy-time]
+version = ">=0.3, <0.5".
 
-# Update La version 0.2.0 introduit l'affichage des lettres .
-Par défaut en majuscules pour plus de simplicite et pragmatisme.
-
-L'objectif c'est de ne pas alourdir le binaire avec des features pas optimales pour des systemes à petites résources.
+Pour consulter le détail des versions précédentes (majuscules par défaut, gestion simplifiée de la ponctuation), veuillez vous référer au fichier :
+👉 CHANGELOG.md
 
 ----
 
@@ -25,7 +30,7 @@ L'objectif c'est de ne pas alourdir le binaire avec des features pas optimales p
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.2.2"
+embassy-ssd1306 = "0.2.4"
 ```
 
 ```rust
@@ -169,7 +174,7 @@ async fn system_task(
 ````
 
 # Exemple version 0.2.0 
-## Exemple d'utilisation
+**Exemple d'utilisation**
 
 ```rust
 use embassy_ssd1306::Ssd1306;
@@ -326,6 +331,7 @@ strip = true
 - `draw_bitmap` (1bpp, MSB à gauche)
 - `draw_char` / `draw_i16` / `draw_str` (font 5x7, chiffres, signe, lettres A–Z)
 - Framebuffer 1024 bytes en RAM, flush optimisé page par page
+
 ----
 
 ## Licence

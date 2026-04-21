@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name = "embassy-ssd1306"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
 build = false
 autolib = false
@@ -32,7 +32,7 @@ name = "embassy_ssd1306"
 path = "src/lib.rs"
 
 [dependencies.embassy-time]
-version = "0.4.0"
+version = ">=0.3, <0.5"
 
 [dependencies.embedded-hal-async]
 version = "1.0"
