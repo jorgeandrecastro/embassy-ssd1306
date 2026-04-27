@@ -2,6 +2,12 @@
 
 L'objectif principal de ce driver est de rester ultra-léger et pragmatique. Nous évitons d'alourdir le binaire avec des fonctionnalités complexes, afin de préserver les ressources critiques des microcontrôleurs (RAM/Flash).
 
+**[0.3.0] - Caractères spéciaux et sécurité**
+Caractères additionnels : Ajout du support pour 14 nouveaux caractères spéciaux : `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, , `!`, `:`. Cela permet d'afficher des textes plus riches et informatifs (états, pourcentages, expressions mathématiques, etc.).
+
+Documentation enrichie : Mise à jour des exemples pour illustrer l'utilisation des nouveaux caractères.
+
+
 **[0.2.4] - Mise à jour de stabilité**
 Flexibilité Embassy : Migration vers une plage de version embassy-time = ">=0.3, <0.5". Cela permet d'utiliser le driver sur Pico 2 (RP2350) et les versions futures d'Embassy sans conflits de compilation.
 

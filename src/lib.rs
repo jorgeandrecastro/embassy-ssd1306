@@ -7,7 +7,8 @@
 //! # embassy-ssd1306
 //!
 //! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
-//! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7 ainsi que le point .
+//! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7 ainsi que le point, 
+//! les parenthèses, la virgule, les crochets, le pourcentage, les signes < > = ? ! et :.
 //! Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 //! (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
 //! optimisé page par page.
@@ -39,7 +40,7 @@ pub const PAGES: usize = SCREEN_HEIGHT / 8;
 
 /// Font 5x7 — chiffres 0-9, signe moins, espace, lettres A-Z, point.
 ///Changement majeur pour les lettres 
-const FONT: [[u8; 5]; 39] = [
+const FONT: [[u8; 5]; 51] = [
     [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
     [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
     [0x42, 0x61, 0x51, 0x49, 0x46], // 2
@@ -80,6 +81,18 @@ const FONT: [[u8; 5]; 39] = [
     [0x07, 0x08, 0x70, 0x08, 0x07], // 36 = 'Y'
     [0x61, 0x51, 0x49, 0x45, 0x43], // 37 = 'Z'
     [0x00, 0x00, 0x60, 0x60, 0x00], // 38 = '.'
+    [0x00, 0x3E, 0x41, 0x41, 0x00], // 39 = '('
+    [0x00, 0x41, 0x41, 0x3E, 0x00], // 40 = ')'
+    [0x00, 0x40, 0x50, 0x30, 0x00], // 41 = ','
+    [0x00, 0x7F, 0x41, 0x41, 0x00], // 42 = '['
+    [0x00, 0x41, 0x41, 0x7F, 0x00], // 43 = ']'
+    [0x23, 0x13, 0x08, 0x64, 0x62], // 44 = '%'
+    [0x08, 0x14, 0x22, 0x41, 0x00], // 45 = '<'
+    [0x00, 0x41, 0x22, 0x14, 0x08], // 46 = '>'
+    [0x00, 0x24, 0x24, 0x24, 0x00], // 47 = '='
+    [0x02, 0x01, 0x51, 0x09, 0x06], // 48 = '?'
+    [0x00, 0x00, 0x5F, 0x00, 0x00], // 49 = '!'
+    [0x00, 0x36, 0x36, 0x00, 0x00], // 50 = ':'
 ];
 
 /// Instance principale du driver SSD1306.
@@ -229,7 +242,8 @@ impl<I: I2c> Ssd1306<I> {
     // Texte 
 
     /// Dessine un glyphe 5x7 dans le framebuffer à la position (x, page).
-    ///`glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z', 38 = '.')
+    ///`glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z', 38 = '.' , 39 = '(', 40 = ')', 41 = ',', 
+    /// 42 = '[', 43 = ']', 44 = '%', 45 = '<', 46 = '>', 47 = '=', 48 = '?', 49 = '!' et 50 = ':').
     pub fn draw_char(&mut self, x: u8, page: u8, glyph_idx: usize) {
         for col in 0..5usize {
             let byte = FONT[glyph_idx][col];
@@ -276,13 +290,26 @@ impl<I: I2c> Ssd1306<I> {
         b' '        => Some(11),
         b'A'..=b'Z' => Some((c - b'A') as usize + 12),
         b'a'..=b'z' => Some((c - b'a') as usize + 12), // minuscules → mêmes glyphes
-        b'.' => Some(38),
+        b'.'        => Some(38),
+        b'('        => Some(39),
+        b')'        => Some(40),
+        b','        => Some(41),
+        b'['        => Some(42),
+        b']'        => Some(43),
+        b'%'        => Some(44),
+        b'<'        => Some(45),
+        b'>'        => Some(46),
+        b'='        => Some(47),
+        b'?'        => Some(48),
+        b'!'        => Some(49),
+        b':'        => Some(50),
+        
         _           => None,
       }
    }
 
    /// Affiche une chaîne ASCII à la position (x, page).
-   /// Seuls les caractères supportés sont affichés ; les autres sont ignorés.
+   /// Seuls les caractères supportés sont affichés , les autres sont ignorés.
   /// Retourne la coordonnée X après le dernier caractère écrit.
    pub fn draw_str(&mut self, mut x: u8, page: u8, text: &[u8]) -> u8 {
      for &c in text {

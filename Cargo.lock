@@ -31,7 +31,7 @@ dependencies = [
 
 [[package]]
 name = "embassy-ssd1306"
-version = "0.2.4"
+version = "0.3.0"
 dependencies = [
  "embassy-time",
  "embedded-hal-async",
