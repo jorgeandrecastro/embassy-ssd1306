@@ -2,8 +2,14 @@
 
 L'objectif principal de ce driver est de rester ultra-léger et pragmatique. Nous évitons d'alourdir le binaire avec des fonctionnalités complexes, afin de préserver les ressources critiques des microcontrôleurs (RAM/Flash).
 
+**[0.4.0] - Symboles opérateurs et formatage**
+Symboles additionnels : Ajout de 5 nouveaux symboles : `+`, `/`, `|`, `_`. Cela permet d'afficher des équations, des séparateurs de contenu, des traits de soulignement, et des ondulations.
+
+Fonctionnalité : Support complet pour les calculs mathématiques simples, le formatage structuré et les visualisations textuelles.
+
 **[0.3.0] - Caractères spéciaux et sécurité**
-Caractères additionnels : Ajout du support pour 14 nouveaux caractères spéciaux : `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, , `!`, `:`. Cela permet d'afficher des textes plus riches et informatifs (états, pourcentages, expressions mathématiques, etc.).
+Caractères additionnels : Ajout du support pour 14 nouveaux caractères spéciaux : `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`,`!`, `:`. Cela permet d'afficher des textes plus riches et informatifs (états, pourcentages, expressions mathématiques, etc.).
+
 
 Documentation enrichie : Mise à jour des exemples pour illustrer l'utilisation des nouveaux caractères.
 

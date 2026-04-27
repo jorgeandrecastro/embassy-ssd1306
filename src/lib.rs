@@ -8,7 +8,7 @@
 //!
 //! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
 //! Permet d'afficher des nombres et du texte ASCII (A–Z, 0–9) sur les pages 0 à 7 ainsi que le point, 
-//! les parenthèses, la virgule, les crochets, le pourcentage, les signes < > = ? ! et :.
+//! les parenthèses, la virgule, les crochets, le pourcentage, les signes < > = ? ! : . + /  | _
 //! Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 //! (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
 //! optimisé page par page.
@@ -38,9 +38,9 @@ pub const SCREEN_HEIGHT: usize = 64;
 /// Nombre de pages (1 page = 8 pixels de hauteur).
 pub const PAGES: usize = SCREEN_HEIGHT / 8;
 
-/// Font 5x7 — chiffres 0-9, signe moins, espace, lettres A-Z, point.
-///Changement majeur pour les lettres 
-const FONT: [[u8; 5]; 51] = [
+/// Font 5x7 — chiffres 0-9, signe moins, espace, lettres A-Z, caractères spéciaux et symboles opérateurs.
+/// Support complet : 0-9, A-Z, -, espace, ., (, ), ,, [, ], %, <, >, =, ?, {, }, !, :, +, /, |, _
+const FONT: [[u8; 5]; 55] = [
     [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
     [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
     [0x42, 0x61, 0x51, 0x49, 0x46], // 2
@@ -93,6 +93,10 @@ const FONT: [[u8; 5]; 51] = [
     [0x02, 0x01, 0x51, 0x09, 0x06], // 48 = '?'
     [0x00, 0x00, 0x5F, 0x00, 0x00], // 49 = '!'
     [0x00, 0x36, 0x36, 0x00, 0x00], // 50 = ':'
+    [0x08, 0x08, 0x3E, 0x08, 0x08], // 51 = '+'
+    [0x20, 0x10, 0x08, 0x04, 0x02], // 52 = '/'
+    [0x00, 0x00, 0x7F, 0x00, 0x00], // 53 = '|'
+    [0x40, 0x40, 0x40, 0x40, 0x40], // 54 = '_'
 ];
 
 /// Instance principale du driver SSD1306.
@@ -243,7 +247,7 @@ impl<I: I2c> Ssd1306<I> {
 
     /// Dessine un glyphe 5x7 dans le framebuffer à la position (x, page).
     ///`glyph_idx` : index dans la table FONT (0-9 = chiffres, 10 = '-', 11 = ' ', 12-37 = 'A'-'Z', 38 = '.' , 39 = '(', 40 = ')', 41 = ',', 
-    /// 42 = '[', 43 = ']', 44 = '%', 45 = '<', 46 = '>', 47 = '=', 48 = '?', 49 = '!' et 50 = ':').
+    /// 42 = '[', 43 = ']', 44 = '%', 45 = '<', 46 = '>', 47 = '=', 48 = '?', 49 = '!' , 50 = ':')  51= '+', 52 = '/', 53 = '|', 54 = '_'
     pub fn draw_char(&mut self, x: u8, page: u8, glyph_idx: usize) {
         for col in 0..5usize {
             let byte = FONT[glyph_idx][col];
@@ -303,7 +307,10 @@ impl<I: I2c> Ssd1306<I> {
         b'?'        => Some(48),
         b'!'        => Some(49),
         b':'        => Some(50),
-        
+        b'+'        => Some(51),
+        b'/'        => Some(52),
+        b'|'        => Some(53),
+        b'_'        => Some(54),
         _           => None,
       }
    }

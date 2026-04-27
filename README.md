@@ -7,30 +7,28 @@
 # embassy-ssd1306
 
 Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C, testé sur la pico 2 et pico 2040.
-Permet d'afficher des nombres, du texte ASCII (A–Z, 0–9) et des caractères spéciaux sur les pages 0 à 7.
+Permet d'afficher des nombres, du texte ASCII (A–Z, 0–9) et des caractères spéciaux sur les pages 0 à 7 et l'semble de  **Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_` 
+
 Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
-optimisé page par page.
+optimisé page par page de 0 à 7 pages.
 Optimisé pour l'exécuteur `embassy`.
 
 # 📋 Historique et Évolutions (Changelog)
 Ce projet suit une philosophie de développement pragmatique : chaque mise à jour vise à enrichir les fonctionnalités tout en minimisant l'empreinte mémoire sur le microcontrôleur.
 
-Dernière version : v0.2.4 Amélioration majeure de la compatibilité pour la Raspberry Pi Pico 2 (RP2350) avec [dependencies.embassy-time]
-version = ">=0.3, <0.5".
+**Dernière version : v0.4.0**  Caractères étendus et opérateurs pour les calculs et formatage
 
-Pour consulter le détail des versions précédentes (majuscules par défaut, gestion simplifiée de la ponctuation), veuillez vous référer au fichier :
+Ajout de 5 nouveaux symboles opérateurs : `+`, `/`, `|`, `_`
+
+Pour consulter le détail de toutes les versions, veuillez vous référer au fichier :
 👉 CHANGELOG.md
-
-----
-
-# Introduction de #![forbid(unsafe_code)] pour du safety.
 
 ## Utilisation
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.3.0"
+embassy-ssd1306 = "0.4.0"
 ```
 
 ```rust
@@ -73,7 +71,7 @@ oled.draw_rect(0, 0, 128, 64, true);
 oled.flush().await.unwrap();
 ```
 
-**Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`
+**Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_`
 
 ---
 
