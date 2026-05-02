@@ -32,7 +32,7 @@ name = "embassy_ssd1306"
 path = "src/lib.rs"
 
 [dependencies.embassy-time]
-version = ">=0.3, <0.5"
+version = "0.5"
 
 [dependencies.embedded-hal-async]
 version = "1.0"

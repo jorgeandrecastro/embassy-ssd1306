@@ -17,7 +17,18 @@ Optimisé pour l'exécuteur `embassy`.
 # 📋 Historique et Évolutions (Changelog)
 Ce projet suit une philosophie de développement pragmatique : chaque mise à jour vise à enrichir les fonctionnalités tout en minimisant l'empreinte mémoire sur le microcontrôleur.
 
-**Dernière version : v0.4.0**  Caractères étendus et opérateurs pour les calculs et formatage
+**Version: v0.5.0**:
+- Remplacement des plages de compatibilité par des versions explicites afin d’assurer une meilleure stabilité et reproductibilité des builds.
+
+### Dépendances
+
+```toml
+[dependencies]
+embassy-time = "0.5"
+embedded-hal-async = "1.0"
+```
+
+**Version : v0.4.0** : Caractères étendus et opérateurs pour les calculs et formatage
 
 Ajout de 5 nouveaux symboles opérateurs : `+`, `/`, `|`, `_`
 
@@ -28,7 +39,7 @@ Pour consulter le détail de toutes les versions, veuillez vous référer au fic
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.4.0"
+embassy-ssd1306 = "0.5.0"
 ```
 
 ```rust
