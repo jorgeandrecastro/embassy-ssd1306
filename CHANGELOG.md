@@ -2,6 +2,13 @@
 
 L'objectif principal de ce driver est de rester ultra-léger et pragmatique. Nous évitons d'alourdir le binaire avec des fonctionnalités complexes, afin de préserver les ressources critiques des microcontrôleurs (RAM/Flash).
 
+**[0.6.0] - Symboles et formatage**
+Nouveaux glyphes : Ajout de 5 nouveaux glyphes : `^`, `#`, `@`, `&`, `"`. Cela permet d'afficher des symboles de puissance/accent, des commentaires, des adresses email, des conjonctions et des chaînes de caractères.
+
+Fonctionnalité : Support étendu pour les annotations, les métadonnées et les caractères spécialisés.
+
+
+
 **[0.4.0] - Symboles opérateurs et formatage**
 Symboles additionnels : Ajout de 5 nouveaux symboles : `+`, `/`, `|`, `_`. Cela permet d'afficher des équations, des séparateurs de contenu, des traits de soulignement, et des ondulations.
 

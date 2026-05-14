@@ -7,7 +7,7 @@
 # embassy-ssd1306
 
 Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C, testé sur la pico 2 et pico 2040.
-Permet d'afficher des nombres, du texte ASCII (A–Z, 0–9) et des caractères spéciaux sur les pages 0 à 7 et l'semble de  **Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_` 
+Permet d'afficher des nombres, du texte ASCII (A–Z, 0–9) et des caractères spéciaux sur les pages 0 à 7 et l'ensemble de **Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_`, `^`, `#`, `@`, `&`, `"` 
 
 Ce pilote fournit un framebuffer en RAM avec des primitives graphiques
 (pixels, lignes, rectangles, bitmaps, texte numérique) et un flush I2C
@@ -39,7 +39,7 @@ Pour consulter le détail de toutes les versions, veuillez vous référer au fic
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.5.0"
+embassy-ssd1306 = "0.6.0"
 ```
 
 ```rust
@@ -82,7 +82,7 @@ oled.draw_rect(0, 0, 128, 64, true);
 oled.flush().await.unwrap();
 ```
 
-**Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_`
+**Caractères supportés** : `0-9`, `A-Z`, `.`, `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`, `+`, `/`, `|`, `_`, `^`, `#`, `@`, `&`, `"`
 
 ---
 
