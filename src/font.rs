@@ -1,0 +1,252 @@
+//! Police 5x7 et conversion ASCII → index de glyphe.
+
+/// Nombre de glyphes disponibles.
+pub const GLYPH_COUNT: usize = 94;
+
+// Indices utilisables avec `draw_char` (évite les « nombres magiques »).
+pub const MINUS: usize = 10;
+pub const SPACE: usize = 11;
+pub const LETTER_A: usize = 12; // A–Z = 12..=37
+pub const DOT: usize = 38;
+pub const LPAREN: usize = 39;
+pub const RPAREN: usize = 40;
+pub const COMMA: usize = 41;
+pub const LBRACKET: usize = 42;
+pub const RBRACKET: usize = 43;
+pub const PERCENT: usize = 44;
+pub const LT: usize = 45;
+pub const GT: usize = 46;
+pub const EQUAL: usize = 47;
+pub const QUESTION: usize = 48;
+pub const EXCLAMATION: usize = 49;
+pub const COLON: usize = 50;
+pub const PLUS: usize = 51;
+pub const SLASH: usize = 52;
+pub const PIPE: usize = 53;
+pub const UNDERSCORE: usize = 54;
+pub const CARET: usize = 55;
+pub const HASH: usize = 56;
+pub const AT: usize = 57;
+pub const AMPERSAND: usize = 58;
+pub const QUOTE: usize = 59;
+
+// Symboles ASCII supplémentaires, opérateurs mathématiques et lettres grecques.
+pub const ASTERISK: usize = 60;
+pub const APOSTROPHE: usize = 61;
+pub const SEMICOLON: usize = 62;
+pub const LBRACE: usize = 63;
+pub const RBRACE: usize = 64;
+pub const BACKSLASH: usize = 65;
+pub const TILDE: usize = 66;
+pub const DOLLAR: usize = 67;
+pub const BACKTICK: usize = 68;
+pub const TIMES: usize = 69;
+pub const DIVIDE: usize = 70;
+pub const PLUS_MINUS: usize = 71;
+pub const DEGREE: usize = 72;
+pub const LEQ: usize = 73;
+pub const GEQ: usize = 74;
+pub const NEQ: usize = 75;
+pub const APPROX: usize = 76;
+pub const SQRT: usize = 77;
+pub const INFINITY: usize = 78;
+pub const PI: usize = 79;
+pub const LAMBDA: usize = 80;
+pub const THETA: usize = 81;
+pub const MU: usize = 82;
+pub const ALPHA: usize = 83;
+pub const BETA: usize = 84;
+pub const DELTA: usize = 85;
+pub const SIGMA: usize = 86;
+pub const OMEGA: usize = 87;
+pub const PHI: usize = 88;
+pub const LOWER_OMEGA: usize = 89;
+pub const SIGMA_LOWER: usize = 90;
+pub const INTEGRAL: usize = 91;
+pub const PARTIAL: usize = 92;
+pub const ARROW_RIGHT: usize = 93;
+
+/// Table des glyphes 5x7 (une colonne par octet, bit 0 = pixel du haut).
+pub(crate) const FONT: [[u8; 5]; GLYPH_COUNT] = [
+    [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
+    [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
+    [0x42, 0x61, 0x51, 0x49, 0x46], // 2
+    [0x21, 0x41, 0x45, 0x4B, 0x31], // 3
+    [0x18, 0x14, 0x12, 0x7F, 0x10], // 4
+    [0x27, 0x45, 0x45, 0x45, 0x39], // 5
+    [0x3C, 0x4A, 0x49, 0x49, 0x30], // 6
+    [0x01, 0x71, 0x09, 0x05, 0x03], // 7
+    [0x36, 0x49, 0x49, 0x49, 0x36], // 8
+    [0x06, 0x49, 0x49, 0x29, 0x1E], // 9
+    [0x08, 0x08, 0x08, 0x08, 0x08], // 10 '-'
+    [0x00, 0x00, 0x00, 0x00, 0x00], // 11 ' '
+    [0x7E, 0x11, 0x11, 0x11, 0x7E], // 12 'A'
+    [0x7F, 0x49, 0x49, 0x49, 0x36], // 13 'B'
+    [0x3E, 0x41, 0x41, 0x41, 0x22], // 14 'C'
+    [0x7F, 0x41, 0x41, 0x22, 0x1C], // 15 'D'
+    [0x7F, 0x49, 0x49, 0x49, 0x41], // 16 'E'
+    [0x7F, 0x09, 0x09, 0x09, 0x01], // 17 'F'
+    [0x3E, 0x41, 0x49, 0x49, 0x7A], // 18 'G'
+    [0x7F, 0x08, 0x08, 0x08, 0x7F], // 19 'H'
+    [0x00, 0x41, 0x7F, 0x41, 0x00], // 20 'I'
+    [0x20, 0x40, 0x41, 0x3F, 0x01], // 21 'J'
+    [0x7F, 0x08, 0x14, 0x22, 0x41], // 22 'K'
+    [0x7F, 0x40, 0x40, 0x40, 0x40], // 23 'L'
+    [0x7F, 0x02, 0x0C, 0x02, 0x7F], // 24 'M'
+    [0x7F, 0x04, 0x08, 0x10, 0x7F], // 25 'N'
+    [0x3E, 0x41, 0x41, 0x41, 0x3E], // 26 'O'
+    [0x7F, 0x09, 0x09, 0x09, 0x06], // 27 'P'
+    [0x3E, 0x41, 0x51, 0x21, 0x5E], // 28 'Q'
+    [0x7F, 0x09, 0x19, 0x29, 0x46], // 29 'R'
+    [0x46, 0x49, 0x49, 0x49, 0x31], // 30 'S'
+    [0x01, 0x01, 0x7F, 0x01, 0x01], // 31 'T'
+    [0x3F, 0x40, 0x40, 0x40, 0x3F], // 32 'U'
+    [0x1F, 0x20, 0x40, 0x20, 0x1F], // 33 'V'
+    [0x3F, 0x40, 0x38, 0x40, 0x3F], // 34 'W'
+    [0x63, 0x14, 0x08, 0x14, 0x63], // 35 'X'
+    [0x07, 0x08, 0x70, 0x08, 0x07], // 36 'Y'
+    [0x61, 0x51, 0x49, 0x45, 0x43], // 37 'Z'
+    [0x00, 0x00, 0x60, 0x60, 0x00], // 38 '.'
+    [0x00, 0x3E, 0x41, 0x41, 0x00], // 39 '('
+    [0x00, 0x41, 0x41, 0x3E, 0x00], // 40 ')'
+    [0x00, 0x40, 0x50, 0x30, 0x00], // 41 ','
+    [0x00, 0x7F, 0x41, 0x41, 0x00], // 42 '['
+    [0x00, 0x41, 0x41, 0x7F, 0x00], // 43 ']'
+    [0x23, 0x13, 0x08, 0x64, 0x62], // 44 '%'
+    [0x08, 0x14, 0x22, 0x41, 0x00], // 45 '<'
+    [0x00, 0x41, 0x22, 0x14, 0x08], // 46 '>'
+    [0x00, 0x24, 0x24, 0x24, 0x00], // 47 '='
+    [0x02, 0x01, 0x51, 0x09, 0x06], // 48 '?'
+    [0x00, 0x00, 0x5F, 0x00, 0x00], // 49 '!'
+    [0x00, 0x36, 0x36, 0x00, 0x00], // 50 ':'
+    [0x08, 0x08, 0x3E, 0x08, 0x08], // 51 '+'
+    [0x20, 0x10, 0x08, 0x04, 0x02], // 52 '/'
+    [0x00, 0x00, 0x7F, 0x00, 0x00], // 53 '|'
+    [0x40, 0x40, 0x40, 0x40, 0x40], // 54 '_'
+    [0x04, 0x02, 0x01, 0x02, 0x04], // 55 '^'
+    [0x14, 0x7F, 0x14, 0x7F, 0x14], // 56 '#'
+    [0x3E, 0x41, 0x5D, 0x55, 0x1E], // 57 '@'
+    [0x32, 0x49, 0x55, 0x22, 0x50], // 58 '&'
+    [0x00, 0x07, 0x00, 0x07, 0x00], // 59 '"'
+    [0x14, 0x08, 0x3E, 0x08, 0x14], // 60 '*'
+    [0x00, 0x04, 0x03, 0x00, 0x00], // 61 '\''
+    [0x00, 0x40, 0x34, 0x00, 0x00], // 62 ';'
+    [0x08, 0x36, 0x41, 0x41, 0x00], // 63 '{'
+    [0x00, 0x41, 0x41, 0x36, 0x08], // 64 '}'
+    [0x02, 0x04, 0x08, 0x10, 0x20], // 65 '\\'
+    [0x08, 0x04, 0x04, 0x08, 0x04], // 66 '~'
+    [0x24, 0x2A, 0x7F, 0x2A, 0x12], // 67 '$'
+    [0x01, 0x02, 0x00, 0x00, 0x00], // 68 '`'
+    [0x22, 0x14, 0x08, 0x14, 0x22], // 69 '×'
+    [0x08, 0x08, 0x2A, 0x08, 0x08], // 70 '÷'
+    [0x44, 0x44, 0x5F, 0x44, 0x44], // 71 '±'
+    [0x06, 0x09, 0x09, 0x06, 0x00], // 72 '°'
+    [0x40, 0x44, 0x4A, 0x51, 0x40], // 73 '≤'
+    [0x40, 0x51, 0x4A, 0x44, 0x40], // 74 '≥'
+    [0x54, 0x34, 0x1C, 0x16, 0x15], // 75 '≠'
+    [0x24, 0x12, 0x12, 0x24, 0x12], // 76 '≈'
+    [0x10, 0x20, 0x40, 0x3F, 0x01], // 77 '√'
+    [0x08, 0x14, 0x08, 0x14, 0x08], // 78 '∞'
+    [0x02, 0x3E, 0x02, 0x1E, 0x22], // 79 'π'
+    [0x41, 0x26, 0x18, 0x20, 0x40], // 80 'λ'
+    [0x3E, 0x49, 0x49, 0x49, 0x3E], // 81 'θ'
+    [0x7E, 0x20, 0x20, 0x30, 0x1E], // 82 'μ'
+    [0x1C, 0x22, 0x22, 0x1C, 0x22], // 83 'α'
+    [0x7E, 0x09, 0x49, 0x76, 0x00], // 84 'β'
+    [0x70, 0x4C, 0x43, 0x4C, 0x70], // 85 'Δ'
+    [0x63, 0x55, 0x49, 0x41, 0x41], // 86 'Σ'
+    [0x4E, 0x71, 0x01, 0x71, 0x4E], // 87 'Ω'
+    [0x1C, 0x22, 0x7F, 0x22, 0x1C], // 88 'φ'
+    [0x3C, 0x40, 0x30, 0x40, 0x3C], // 89 'ω'
+    [0x1C, 0x22, 0x22, 0x1E, 0x02], // 90 'σ'
+    [0x40, 0x40, 0x3E, 0x01, 0x01], // 91 '∫'
+    [0x38, 0x45, 0x45, 0x3E, 0x00], // 92 '∂'
+    [0x08, 0x08, 0x08, 0x1C, 0x08], // 93 '→'
+];
+
+/// Convertit un caractère ASCII en index de glyphe.
+///
+/// Les minuscules utilisent les glyphes des majuscules.
+/// Retourne `None` si le caractère n'est pas supporté.
+pub const fn char_to_glyph(c: u8) -> Option<usize> {
+    match c {
+        b'0'..=b'9' => Some((c - b'0') as usize),
+        b'A'..=b'Z' => Some((c - b'A') as usize + LETTER_A),
+        b'a'..=b'z' => Some((c - b'a') as usize + LETTER_A),
+        b'-' => Some(MINUS),
+        b' ' => Some(SPACE),
+        b'.' => Some(DOT),
+        b'(' => Some(LPAREN),
+        b')' => Some(RPAREN),
+        b',' => Some(COMMA),
+        b'[' => Some(LBRACKET),
+        b']' => Some(RBRACKET),
+        b'%' => Some(PERCENT),
+        b'<' => Some(LT),
+        b'>' => Some(GT),
+        b'=' => Some(EQUAL),
+        b'?' => Some(QUESTION),
+        b'!' => Some(EXCLAMATION),
+        b':' => Some(COLON),
+        b'+' => Some(PLUS),
+        b'/' => Some(SLASH),
+        b'|' => Some(PIPE),
+        b'_' => Some(UNDERSCORE),
+        b'^' => Some(CARET),
+        b'#' => Some(HASH),
+        b'@' => Some(AT),
+        b'&' => Some(AMPERSAND),
+        b'"' => Some(QUOTE),
+        b'*' => Some(ASTERISK),
+        b'\'' => Some(APOSTROPHE),
+        b';' => Some(SEMICOLON),
+        b'{' => Some(LBRACE),
+        b'}' => Some(RBRACE),
+        b'\\' => Some(BACKSLASH),
+        b'~' => Some(TILDE),
+        b'$' => Some(DOLLAR),
+        b'`' => Some(BACKTICK),
+        _ => None,
+    }
+}
+
+
+/// Convertit un caractère Unicode en index de glyphe.
+///
+/// Supporte tout l'ASCII géré par [`char_to_glyph`], plus les symboles
+/// mathématiques (`× ÷ ± ° ≤ ≥ ≠ ≈ √ ∞ ∫ ∂ →`) et les lettres grecques
+/// `α β Δ θ λ μ π σ Σ φ ω Ω`. Retourne `None` sinon.
+///
+/// Les majuscules grecques sans glyphe dédié (`Π`, `Λ`, `Θ`, `Φ`…) ne sont
+/// volontairement pas gérées pour l'instant.
+pub const fn char_to_glyph_unicode(c: char) -> Option<usize> {
+    match c {
+        '×' => Some(TIMES),
+        '÷' => Some(DIVIDE),
+        '±' => Some(PLUS_MINUS),
+        '°' => Some(DEGREE),
+        '≤' => Some(LEQ),
+        '≥' => Some(GEQ),
+        '≠' => Some(NEQ),
+        '≈' => Some(APPROX),
+        '√' => Some(SQRT),
+        '∞' => Some(INFINITY),
+        'π' => Some(PI),
+        'λ' => Some(LAMBDA),
+        'θ' | 'ϑ' => Some(THETA),
+        'μ' | 'µ' => Some(MU),
+        'α' => Some(ALPHA),
+        'β' => Some(BETA),
+        'Δ' => Some(DELTA),
+        'Σ' => Some(SIGMA),
+        'Ω' => Some(OMEGA),
+        'φ' | 'ϕ' => Some(PHI),
+        'ω' => Some(LOWER_OMEGA),
+        'σ' => Some(SIGMA_LOWER),
+        '∫' => Some(INTEGRAL),
+        '∂' => Some(PARTIAL),
+        '→' => Some(ARROW_RIGHT),
+        c if c.is_ascii() => char_to_glyph(c as u8),
+        _ => None,
+    }
+}
