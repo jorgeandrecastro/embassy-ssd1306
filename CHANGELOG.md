@@ -1,75 +1,93 @@
 # 📜 Changelog - embassy-ssd1306
 
-L'objectif principal de ce driver est de rester ultra-léger et pragmatique. Nous évitons d'alourdir le binaire avec des fonctionnalités complexes, afin de préserver les ressources critiques des microcontrôleurs (RAM/Flash).
+The primary goal of this driver is to remain lightweight and pragmatic. We avoid
+adding complex features that would bloat the binary, preserving the critical
+resources of microcontrollers (RAM/Flash).
 
+All notable changes to `embassy-ssd1306` are documented here.
+This project follows [Semantic Versioning](https://semver.org/).
 
-# Changelog
+## [0.7.1]
 
-Toutes les modifications notables de `embassy-ssd1306` sont documentées ici.
-Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
+### Changed
+- Translated the project documentation into English.
 
 ## [0.7.0]
 
-### Ajouté
-- **34 nouveaux glyphes** (table portée de 60 à 94 entrées) :
-  - ASCII : `*` `'` `;` `{` `}` `\` `~` `$` `` ` ``
-  - Opérateurs mathématiques : `×` `÷` `±` `°` `≤` `≥` `≠` `≈` `√` `∞` `∫` `∂` `→`
-  - Lettres grecques minuscules : `α` `β` `λ` `θ` `μ` `π` `σ` `φ` `ω`
-  - Lettres grecques majuscules : `Δ` `Σ` `Ω`
-- `font::char_to_glyph_unicode(char)` : conversion d'un caractère Unicode en index de glyphe
-  (variantes acceptées : `ϑ`, `ϕ`, `µ`).
-- `draw_text(x, page, &str)` : affichage de texte UTF-8 (ASCII + symboles + grec).
-- Constantes de glyphes nommées dans `font` (`font::DOT`, `font::LAMBDA`, `font::THETA`…)
-  à utiliser avec `draw_char` à la place des index numériques.
-- `Ssd1306::release()` pour récupérer le bus I2C.
+### Added
+- **34 new glyphs** (the table grew from 60 to 94 entries):
+  - ASCII: `*` `'` `;` `{` `}` `\` `~` `$` `` ` ``
+  - Mathematical operators: `×` `÷` `±` `°` `≤` `≥` `≠` `≈` `√` `∞` `∫` `∂` `→`
+  - Lowercase Greek letters: `α` `β` `λ` `θ` `μ` `π` `σ` `φ` `ω`
+  - Uppercase Greek letters: `Δ` `Σ` `Ω`
+- `font::char_to_glyph_unicode(char)`: converts a Unicode character to a glyph index
+  (supported variants: `ϑ`, `ϕ`, `µ`).
+- `draw_text(x, page, &str)`: displays UTF-8 text (ASCII + symbols + Greek letters).
+- Named glyph constants in `font` (`font::DOT`, `font::LAMBDA`, `font::THETA`...)
+  for use with `draw_char` instead of numeric indices.
+- `Ssd1306::release()` to retrieve the I2C bus.
 
-### Modifié
-- **Réorganisation modulaire** (API publique inchangée, `Ssd1306` se déréférence vers `FrameBuffer`) :
+### Changed
+- **Modular reorganization** (public API unchanged; `Ssd1306` dereferences to `FrameBuffer`):
   `command` (opcodes), `font`, `framebuffer`, `graphics`, `text`, `driver`.
-- Les opcodes de `init()` sont désormais nommés (`command::SET_CONTRAST`, `command::CHARGE_PUMP`…).
+- `init()` opcodes are now named (`command::SET_CONTRAST`, `command::CHARGE_PUMP`...).
 
-### Corrigé
-- Débordement `u8` possible dans `draw_hline`, `draw_vline`, `draw_bitmap` (dessin désormais rogné).
-- `draw_rect` avec `w == 0` ou `h == 0` ne provoque plus de débordement.
-- `draw_char` : un index de glyphe invalide est ignoré, et un glyphe proche du bord droit
-  ne déborde plus sur la page suivante.
+### Fixed
+- Possible `u8` overflow in `draw_hline`, `draw_vline`, and `draw_bitmap` (drawing is now clipped).
+- `draw_rect` no longer overflows when `w == 0` or `h == 0`.
+- `draw_char`: invalid glyph indices are ignored, and glyphs near the right edge
+  no longer overflow onto the next page.
 
 ### Note
-- Les majuscules grecques sans glyphe dédié (`Π`, `Λ`, `Θ`, `Φ`…) ne sont pas gérées pour l'instant.
+- Uppercase Greek letters without a dedicated glyph (`Π`, `Λ`, `Θ`, `Φ`...) are not currently supported.
 
+## [0.6.0] - Symbols and formatting
 
-**[0.6.0] - Symboles et formatage**
-Nouveaux glyphes : Ajout de 5 nouveaux glyphes : `^`, `#`, `@`, `&`, `"`. Cela permet d'afficher des symboles de puissance/accent, des commentaires, des adresses email, des conjonctions et des chaînes de caractères.
+New glyphs: Added 5 new glyphs: `^`, `#`, `@`, `&`, `"`. These make it possible
+to display exponent/accent symbols, comments, email addresses, ampersands, and strings.
 
-Fonctionnalité : Support étendu pour les annotations, les métadonnées et les caractères spécialisés.
+Feature: Expanded support for annotations, metadata, and specialized characters.
 
+## [0.4.0] - Operator symbols and formatting
 
+Additional symbols: Added 5 new symbols: `+`, `/`, `|`, `_`. These make it possible
+to display equations, content separators, underscores, and tildes.
 
-**[0.4.0] - Symboles opérateurs et formatage**
-Symboles additionnels : Ajout de 5 nouveaux symboles : `+`, `/`, `|`, `_`. Cela permet d'afficher des équations, des séparateurs de contenu, des traits de soulignement, et des ondulations.
+Feature: Full support for simple mathematical calculations, structured formatting,
+and text-based visualizations.
 
-Fonctionnalité : Support complet pour les calculs mathématiques simples, le formatage structuré et les visualisations textuelles.
+## [0.3.0] - Special characters and safety
 
-**[0.3.0] - Caractères spéciaux et sécurité**
-Caractères additionnels : Ajout du support pour 14 nouveaux caractères spéciaux : `(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`,`!`, `:`. Cela permet d'afficher des textes plus riches et informatifs (états, pourcentages, expressions mathématiques, etc.).
+Additional characters: Added support for 14 new special characters:
+`(`, `)`, `,`, `[`, `]`, `%`, `<`, `>`, `=`, `?`, `!`, `:`. This enables richer
+and more informative text displays (status messages, percentages, mathematical
+expressions, and more).
 
+Documentation improvements: Updated examples to demonstrate the use of the new characters.
 
-Documentation enrichie : Mise à jour des exemples pour illustrer l'utilisation des nouveaux caractères.
+## [0.2.4] - Stability update
 
+Embassy flexibility: Migrated to the `embassy-time = ">=0.3, <0.5"` version range.
+This allows the driver to be used on Pico 2 (RP2350) and future versions of Embassy
+without dependency conflicts.
 
-**[0.2.4] - Mise à jour de stabilité**
-Flexibilité Embassy : Migration vers une plage de version embassy-time = ">=0.3, <0.5". Cela permet d'utiliser le driver sur Pico 2 (RP2350) et les versions futures d'Embassy sans conflits de compilation.
+## [0.2.3] - Hardware example
 
+Pico validation: Added a complete example validated and tested on the Raspberry Pi
+Pico (RP2040), providing a quick start with standard wiring.
 
-**[0.2.3] - Exemple matériel**
-Validation Pico : Ajout d'un exemple complet, validé et testé sur Raspberry Pi Pico (RP2040). Idéal pour démarrer un projet rapidement avec un câblage standard.
+## [0.2.1] - Punctuation
 
-**[0.2.1] - Ponctuation**
-Ajout du caractère . : Support du point pour les affichages numériques ou de fin de phrase.
+Added the `.` character for numeric displays and sentence endings.
 
-Design Choice : Un espace automatique est inséré après le point. C'est un choix volontaire pour garder un code simple, efficace et éviter des fonctions de calcul de largeur de caractères trop lourdes pour le processeur.
+Design choice: A space is automatically inserted after the period. This deliberate
+choice keeps the code simple and efficient, avoiding character-width calculation
+functions that would be too costly for the processor.
 
-**[0.2.0] - Gestion du texte**
-Affichage des lettres : Introduction du support alphabétique.
+## [0.2.0] - Text handling
 
-Pragmatisme : Par défaut, l'affichage utilise des majuscules. C'est un choix de simplicité pour garantir une lisibilité maximale sur les petits écrans OLED tout en minimisant la taille de la police en mémoire Flash.
+Letter display: Introduced alphabetic character support.
+
+Pragmatism: Text is displayed in uppercase by default. This simplifies the
+implementation, maximizes readability on small OLED screens, and minimizes
+the font's footprint in Flash memory.

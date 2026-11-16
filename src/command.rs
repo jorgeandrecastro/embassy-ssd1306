@@ -1,8 +1,8 @@
-//! Opcodes du contrôleur SSD1306 et octets de contrôle I2C.
+//! SSD1306 controller opcodes and I2C control bytes.
 
-/// Octet de contrôle : le(s) octet(s) suivant(s) sont des commandes.
+/// Control byte: the following byte(s) are commands.
 pub const CONTROL_CMD: u8 = 0x00;
-/// Octet de contrôle : le(s) octet(s) suivant(s) sont des données GDDRAM.
+/// Control byte: the following byte(s) are GDDRAM data.
 pub const CONTROL_DATA: u8 = 0x40;
 
 pub const DISPLAY_OFF: u8 = 0xAE;

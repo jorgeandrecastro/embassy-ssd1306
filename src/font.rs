@@ -1,9 +1,9 @@
-//! Police 5x7 et conversion ASCII → index de glyphe.
+//! 5x7 font and ASCII-to-glyph-index conversion.
 
 /// Nombre de glyphes disponibles.
 pub const GLYPH_COUNT: usize = 94;
 
-// Indices utilisables avec `draw_char` (évite les « nombres magiques »).
+// Indices for use with `draw_char` (avoids magic numbers).
 pub const MINUS: usize = 10;
 pub const SPACE: usize = 11;
 pub const LETTER_A: usize = 12; // A–Z = 12..=37
@@ -30,7 +30,7 @@ pub const AT: usize = 57;
 pub const AMPERSAND: usize = 58;
 pub const QUOTE: usize = 59;
 
-// Symboles ASCII supplémentaires, opérateurs mathématiques et lettres grecques.
+// Additional ASCII symbols, mathematical operators, and Greek letters.
 pub const ASTERISK: usize = 60;
 pub const APOSTROPHE: usize = 61;
 pub const SEMICOLON: usize = 62;
@@ -66,7 +66,7 @@ pub const INTEGRAL: usize = 91;
 pub const PARTIAL: usize = 92;
 pub const ARROW_RIGHT: usize = 93;
 
-/// Table des glyphes 5x7 (une colonne par octet, bit 0 = pixel du haut).
+/// 5x7 glyph table (one column per byte, bit 0 = top pixel).
 pub(crate) const FONT: [[u8; 5]; GLYPH_COUNT] = [
     [0x3E, 0x51, 0x49, 0x45, 0x3E], // 0
     [0x00, 0x42, 0x7F, 0x40, 0x00], // 1
@@ -164,10 +164,10 @@ pub(crate) const FONT: [[u8; 5]; GLYPH_COUNT] = [
     [0x08, 0x08, 0x08, 0x1C, 0x08], // 93 '→'
 ];
 
-/// Convertit un caractère ASCII en index de glyphe.
+/// Converts an ASCII character to a glyph index.
 ///
-/// Les minuscules utilisent les glyphes des majuscules.
-/// Retourne `None` si le caractère n'est pas supporté.
+/// Lowercase letters use the uppercase glyphs.
+/// Returns `None` if the character is unsupported.
 pub const fn char_to_glyph(c: u8) -> Option<usize> {
     match c {
         b'0'..=b'9' => Some((c - b'0') as usize),
@@ -211,14 +211,14 @@ pub const fn char_to_glyph(c: u8) -> Option<usize> {
 }
 
 
-/// Convertit un caractère Unicode en index de glyphe.
+/// Converts a Unicode character to a glyph index.
 ///
-/// Supporte tout l'ASCII géré par [`char_to_glyph`], plus les symboles
-/// mathématiques (`× ÷ ± ° ≤ ≥ ≠ ≈ √ ∞ ∫ ∂ →`) et les lettres grecques
-/// `α β Δ θ λ μ π σ Σ φ ω Ω`. Retourne `None` sinon.
+/// Supports all ASCII handled by [`char_to_glyph`], as well as the mathematical
+/// symbols (`× ÷ ± ° ≤ ≥ ≠ ≈ √ ∞ ∫ ∂ →`) and Greek letters
+/// `α β Δ θ λ μ π σ Σ φ ω Ω`. Returns `None` otherwise.
 ///
-/// Les majuscules grecques sans glyphe dédié (`Π`, `Λ`, `Θ`, `Φ`…) ne sont
-/// volontairement pas gérées pour l'instant.
+/// Uppercase Greek letters without a dedicated glyph (`Π`, `Λ`, `Θ`, `Φ`...)
+/// are intentionally unsupported for now.
 pub const fn char_to_glyph_unicode(c: char) -> Option<usize> {
     match c {
         '×' => Some(TIMES),

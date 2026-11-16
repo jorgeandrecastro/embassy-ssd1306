@@ -4,46 +4,46 @@
 
 # embassy-ssd1306
 
-Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C, testé sur Pico 2 (RP2350) et Pico (RP2040).
-Optimisé pour l'exécuteur `embassy`.
+Asynchronous `no_std` driver for the SSD1306 128x64 OLED display over I2C, tested on the Pico 2 (RP2350) and Pico (RP2040).
+Optimized for the `embassy` executor.
 
-Il fournit un framebuffer en RAM (1024 octets) avec des primitives graphiques
-(pixels, lignes, rectangles, bitmaps), du texte et des nombres (police 5x7), et un flush I2C
-optimisé page par page (pages 0 à 7).
+It provides a 1024-byte RAM framebuffer with graphics primitives
+(pixels, lines, rectangles, bitmaps), text and numbers (5x7 font), and an
+optimized page-by-page I2C flush (pages 0 through 7).
 
-## Caractères supportés
+## Supported characters
 
-| Catégorie | Caractères |
+| Category | Characters |
 |---|---|
-| Chiffres et lettres | `0-9`, `A-Z` (les minuscules `a-z` utilisent les mêmes glyphes) |
-| Ponctuation | `.` `,` `:` `;` `!` `?` `'` `"` `` ` `` |
-| Groupement | `(` `)` `[` `]` `{` `}` `<` `>` |
-| Opérateurs ASCII | `+` `-` `=` `*` `/` `\` `\|` `_` `^` `~` `%` |
-| Symboles | `#` `@` `&` `$` |
-| Maths (Unicode) | `×` `÷` `±` `°` `≤` `≥` `≠` `≈` `√` `∞` `∫` `∂` `→` |
-| Grec minuscule (Unicode) | `α` `β` `λ` `θ` `μ` `π` `σ` `φ` `ω` |
-| Grec majuscule (Unicode) | `Δ` `Σ` `Ω` |
+| Digits and letters | `0-9`, `A-Z` (lowercase `a-z` use the same glyphs) |
+| Punctuation | `.` `,` `:` `;` `!` `?` `'` `"` `` ` `` |
+| Grouping | `(` `)` `[` `]` `{` `}` `<` `>` |
+| ASCII operators | `+` `-` `=` `*` `/` `\` `\|` `_` `^` `~` `%` |
+| Symbols | `#` `@` `&` `$` |
+| Math (Unicode) | `×` `÷` `±` `°` `≤` `≥` `≠` `≈` `√` `∞` `∫` `∂` `→` |
+| Lowercase Greek (Unicode) | `α` `β` `λ` `θ` `μ` `π` `σ` `φ` `ω` |
+| Uppercase Greek (Unicode) | `Δ` `Σ` `Ω` |
 
-- Les caractères ASCII s'affichent avec `draw_str(x, page, b"...")`.
-- Les symboles Unicode s'affichent avec `draw_text(x, page, "...")`, ou avec `draw_char` et
-  les constantes de `font::` (`font::LAMBDA`, `font::THETA`, `font::DOT`…).
-- Les autres majuscules grecques (`Π`, `Λ`, `Θ`, `Φ`…) ne sont pas gérées pour l'instant.
+- ASCII characters are displayed with `draw_str(x, page, b"...")`.
+- Unicode symbols are displayed with `draw_text(x, page, "...")`, or with `draw_char` and
+  the constants from `font::` (`font::LAMBDA`, `font::THETA`, `font::DOT`...).
+- Other uppercase Greek letters (`Π`, `Λ`, `Θ`, `Φ`...) are not currently supported.
 
 ## Installation
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.7.0"
+embassy-ssd1306 = "0.7.1"
 ```
 
-Dépendances du crate :
+Crate dependencies:
 
 ```toml
 embassy-time = "0.5"
 embedded-hal-async = "1.0"
 ```
 
-## Utilisation rapide
+## Quick start
 
 ```rust
 use embassy_ssd1306::Ssd1306;
@@ -56,9 +56,9 @@ oled.draw_i16(0, 0, -1234);
 oled.flush().await.unwrap();
 ```
 
-## Exemples
+## Examples
 
-### Texte, nombres et symboles
+### Text, numbers, and symbols
 
 ```rust
 use embassy_ssd1306::Ssd1306;
@@ -66,35 +66,35 @@ use embassy_ssd1306::Ssd1306;
 let mut oled = Ssd1306::new(i2c, 0x3C);
 oled.init().await.unwrap();
 
-// Texte ASCII
+// ASCII text
 oled.draw_str(0, 0, b"HELLO (WORLD)");
 
-// Nombre signé chaîné avec du texte
+// Signed number combined with text
 oled.draw_str(0, 1, b"TEMP: ");
 oled.draw_i16(30, 1, -12);
 oled.draw_str(45, 1, b"C");
 
-// Caractères additionnels
+// Additional characters
 oled.draw_str(0, 2, b"[STATUS]=OK!");
 oled.draw_str(0, 3, b"50% DONE <->");
 oled.draw_str(0, 4, b"TEST: A,B,C");
 
-// Maths et lettres grecques (UTF-8)
+// Math symbols and Greek letters (UTF-8)
 oled.draw_text(0, 5, "λ=2π/θ  ΔT≤5°");
 oled.draw_text(0, 6, "x≠0 → √x ≈ ∞");
 
-// Rectangle de bordure
+// Border rectangle
 oled.draw_rect(0, 0, 128, 64, true);
 
 oled.flush().await.unwrap();
 ```
 
-### Pico (RP2040) : racines carrées
+### Pico (RP2040): square roots
 
 ```rust
 use embassy_ssd1306::font;
 
-// Initialisation OLED
+// OLED initialization
 if let Ok(_) = oled.init().await {
     oled.clear();
     oled.draw_rect(0, 0, 127, 63, true);
@@ -102,76 +102,77 @@ if let Ok(_) = oled.init().await {
     Timer::after_millis(500).await;
 }
 
-// Affichage avec calcul de racine carrée
-let calculs = [4, 16, 25, 23];
+// Display square root calculations
+let calculations = [4, 16, 25, 23];
 let mut idx = 0;
 
 loop {
     oled.clear();
     oled.draw_rect(0, 0, 127, 63, true);
 
-    let n = calculs[idx];
+    let n = calculations[idx];
     let res_q15 = sqrt(n);
-    let res_humain = (res_q15 as i32 * 181 + 16384) / 32768;
+    let res_human = (res_q15 as i32 * 181 + 16384) / 32768;
 
-    // Étiquettes
+    // Labels
     oled.draw_str(10, 1, b"sqrt");
-    oled.draw_str(65, 1, b"Resultat");
+    oled.draw_str(65, 1, b"Result");
 
-    // Nombre et résultat
+    // Number and result
     let next_x = oled.draw_i16(10, 3, n as i16);
     oled.draw_char(next_x + 5, 3, font::DOT);
-    oled.draw_i16(80, 3, res_humain as i16);
+    oled.draw_i16(80, 3, res_human as i16);
 
     let _ = oled.flush().await;
 
-    idx = (idx + 1) % calculs.len();
+    idx = (idx + 1) % calculations.len();
     Timer::after_secs(1).await;
 }
 ```
 
-## Fonctionnalités
+## Features
 
 - `draw_pixel` / `draw_hline` / `draw_vline`
 - `draw_rect` / `draw_filled_rect`
-- `draw_bitmap` (1bpp, MSB à gauche)
-- `draw_char` / `draw_i16` / `draw_str` / `draw_text` (police 5x7 : chiffres, lettres, ponctuation, maths, grec)
-- Framebuffer de 1024 octets en RAM, flush optimisé page par page
-- Dessin rogné aux bords de l'écran (aucune panique sur coordonnées hors limites)
+- `draw_bitmap` (1bpp, MSB on the left)
+- `draw_char` / `draw_i16` / `draw_str` / `draw_text` (5x7 font: digits, letters, punctuation, math symbols, Greek)
+- 1024-byte RAM framebuffer, optimized page-by-page flush
+- Drawing is clipped to the screen edges (out-of-bounds coordinates never cause a panic)
 
 ## Architecture
 
 ```
 src/
-├── lib.rs          constantes, documentation, ré-exports
-├── command.rs      opcodes SSD1306 et octets de contrôle I2C
-├── font.rs         table des glyphes, constantes, conversion ASCII/Unicode → glyphe
-├── framebuffer.rs  FrameBuffer (RAM, indépendant d'I2C) + draw_pixel
-├── graphics.rs     lignes, rectangles, bitmaps
+├── lib.rs          constants, documentation, re-exports
+├── command.rs      SSD1306 opcodes and I2C control bytes
+├── font.rs         glyph table, constants, ASCII/Unicode-to-glyph conversion
+├── framebuffer.rs  FrameBuffer (RAM, independent of I2C) + draw_pixel
+├── graphics.rs     lines, rectangles, bitmaps
 ├── text.rs         draw_char, draw_i16, draw_str, draw_text
-└── driver.rs       Ssd1306<I> : new, init, flush, release
+└── driver.rs       Ssd1306<I>: new, init, flush, release
 ```
 
-Toutes les méthodes de dessin sont sur `FrameBuffer` ; `Ssd1306` s'y déréférence,
-donc `oled.draw_rect(...)` fonctionne directement.
+All drawing methods are implemented on `FrameBuffer`; `Ssd1306` dereferences
+to it, so `oled.draw_rect(...)` works directly.
 
-## 📋 Historique (Changelog)
+## 📋 Changelog
 
-Ce projet suit une philosophie pragmatique : chaque mise à jour enrichit les fonctionnalités
-tout en minimisant l'empreinte mémoire sur le microcontrôleur.
+This project follows a pragmatic approach: each update adds useful functionality
+while minimizing memory usage on the microcontroller.
 
-**v0.7.0** : réorganisation modulaire, 34 nouveaux glyphes (symboles ASCII, opérateurs
-mathématiques, lettres grecques), `draw_text` (UTF-8), constantes de glyphes nommées,
-corrections de débordements.
+**v0.7.1**: documentation translated into English.
 
-**v0.6.0** : nouveaux glyphes `^` `#` `@` `&` `"`.
+**v0.7.0**: modular reorganization, 34 new glyphs (ASCII symbols, mathematical
+operators, Greek letters), `draw_text` (UTF-8), named glyph constants, overflow fixes.
 
-**v0.5.0** : versions de dépendances explicites pour des builds reproductibles.
+**v0.6.0**: new glyphs `^` `#` `@` `&` `"`.
 
-**v0.4.0** : opérateurs `+` `/` `|` `_`.
+**v0.5.0**: explicit dependency versions for reproducible builds.
 
-Le détail complet de toutes les versions est dans 👉 [CHANGELOG.md](CHANGELOG.md).
+**v0.4.0**: operators `+` `/` `|` `_`.
 
-## Licence
+The full changelog for all versions is available in 👉 [CHANGELOG.md](CHANGELOG.md).
+
+## License
 
 GPL-2.0-or-later — Copyright (C) 2026 Jorge Andre Castro

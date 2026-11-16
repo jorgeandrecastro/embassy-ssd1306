@@ -6,23 +6,23 @@
 
 //! # embassy-ssd1306
 //!
-//! Driver asynchrone `no_std` pour l'écran OLED SSD1306 128x64 via I2C.
+//! Asynchronous `no_std` driver for the SSD1306 128x64 OLED display over I2C.
 //!
-//! Le crate est organisé en couches indépendantes :
+//! The crate is organized into independent layers:
 //!
-//! | Module          | Rôle                                             |
+//! | Module          | Role                                             |
 //! |-----------------|--------------------------------------------------|
-//! | [`command`]     | Opcodes SSD1306 et octets de contrôle I2C        |
-//! | [`font`]        | Police 5x7, indices de glyphes, ASCII → glyphe   |
-//! | [`framebuffer`] | Tampon RAM 1024 octets + `draw_pixel`            |
-//! | `graphics`      | Primitives : lignes, rectangles, bitmaps         |
+//! | [`command`]     | SSD1306 opcodes and I2C control bytes            |
+//! | [`font`]        | 5x7 font, glyph indices, ASCII-to-glyph mapping  |
+//! | [`framebuffer`] | 1024-byte RAM buffer + `draw_pixel`              |
+//! | `graphics`      | Primitives: lines, rectangles, bitmaps           |
 //! | `text`          | `draw_char`, `draw_str`, `draw_i16`              |
-//! | [`driver`]      | `Ssd1306<I>` : init + flush I2C                  |
+//! | [`driver`]      | `Ssd1306<I>`: I2C init + flush                   |
 //!
-//! Toutes les méthodes de dessin sont sur [`FrameBuffer`] ; [`Ssd1306`]
-//! y accède par `Deref`, l'API `oled.draw_rect(...)` reste donc inchangée.
+//! All drawing methods are implemented on [`FrameBuffer`]; [`Ssd1306`]
+//! accesses it through `Deref`, so the `oled.draw_rect(...)` API remains unchanged.
 //!
-//! # Exemple
+//! # Example
 //!
 //! ```rust,no_run
 //! use embassy_ssd1306::Ssd1306;
@@ -35,13 +35,13 @@
 //! oled.flush().await.unwrap();
 //! ```
 
-/// Largeur de l'écran en pixels.
+/// Display width in pixels.
 pub const SCREEN_WIDTH: usize = 128;
 
-/// Hauteur de l'écran en pixels.
+/// Display height in pixels.
 pub const SCREEN_HEIGHT: usize = 64;
 
-/// Nombre de pages (1 page = 8 pixels de hauteur).
+/// Number of pages (1 page = 8 pixels high).
 pub const PAGES: usize = SCREEN_HEIGHT / 8;
 
 pub mod command;

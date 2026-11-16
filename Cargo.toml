@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name = "embassy-ssd1306"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
 build = false
 autolib = false
@@ -9,7 +9,7 @@ autobins = false
 autoexamples = false
 autotests = false
 autobenches = false
-description = "Driver async no_std pour l'écran OLED SSD1306 via I2C, basé sur Embassy."
+description = "Async no_std driver for the SSD1306 OLED display over I2C, based on Embassy."
 documentation = "https://docs.rs/embassy-ssd1306"
 readme = "README.md"
 keywords = [

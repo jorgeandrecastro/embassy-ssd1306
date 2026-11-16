@@ -1,18 +1,18 @@
-//! Rendu de texte et de nombres (police 5x7) sur [`FrameBuffer`].
+//! Text and number rendering (5x7 font) on [`FrameBuffer`].
 
 use crate::font::{char_to_glyph, char_to_glyph_unicode, FONT};
 use crate::framebuffer::FrameBuffer;
 use crate::{PAGES, SCREEN_WIDTH};
 
-/// Largeur d'un caractère + 1 colonne d'espacement.
+/// Character width + 1 spacing column.
 const CHAR_ADVANCE: u8 = 6;
 
 impl FrameBuffer {
-    /// Dessine un glyphe 5x7 à la position (`x`, `page`).
+    /// Draws a 5x7 glyph at position (`x`, `page`).
     ///
-    /// `glyph_idx` : voir les constantes de [`crate::font`].
-    /// Un index ou une page invalide est ignoré ; le glyphe est rogné
-    /// au bord droit de l'écran (pas de débordement sur la page suivante).
+    /// `glyph_idx`: see the constants in [`crate::font`].
+    /// Invalid indices or pages are ignored; the glyph is clipped at the
+    /// right edge of the display (it does not overflow onto the next page).
     pub fn draw_char(&mut self, x: u8, page: u8, glyph_idx: usize) {
         let Some(glyph) = FONT.get(glyph_idx) else { return };
         if page as usize >= PAGES {
@@ -27,7 +27,7 @@ impl FrameBuffer {
         }
     }
 
-    /// Affiche un entier signé 16 bits. Retourne le X après le dernier caractère.
+    /// Displays a signed 16-bit integer. Returns the X coordinate after the last character.
     pub fn draw_i16(&mut self, mut x: u8, page: u8, val: i16) -> u8 {
         if val < 0 {
             self.draw_char(x, page, crate::font::MINUS);
@@ -53,8 +53,8 @@ impl FrameBuffer {
         x
     }
 
-    /// Affiche une chaîne ASCII. Les caractères non supportés sont ignorés
-    /// (mais laissent un espace). Retourne le X après le dernier caractère.
+    /// Displays an ASCII string. Unsupported characters are ignored
+    /// (but leave a space). Returns the X coordinate after the last character.
     pub fn draw_str(&mut self, mut x: u8, page: u8, text: &[u8]) -> u8 {
         for &c in text {
             if let Some(idx) = char_to_glyph(c) {
@@ -65,9 +65,9 @@ impl FrameBuffer {
         x
     }
 
-    /// Affiche une chaîne UTF-8 (ASCII + symboles mathématiques + lettres
-    /// grecques, voir [`char_to_glyph_unicode`]). Les caractères non supportés
-    /// sont ignorés (mais laissent un espace). Retourne le X final.
+    /// Displays a UTF-8 string (ASCII + mathematical symbols + Greek letters;
+    /// see [`char_to_glyph_unicode`]). Unsupported characters are ignored
+    /// (but leave a space). Returns the final X coordinate.
     pub fn draw_text(&mut self, mut x: u8, page: u8, text: &str) -> u8 {
         for c in text.chars() {
             if let Some(idx) = char_to_glyph_unicode(c) {

@@ -1,45 +1,45 @@
-//! Tampon d'image en RAM, indépendant du bus I2C.
+//! RAM framebuffer, independent of the I2C bus.
 
 use crate::{PAGES, SCREEN_HEIGHT, SCREEN_WIDTH};
 
-/// Taille du framebuffer en octets (1024 pour 128x64).
+/// Framebuffer size in bytes (1024 for 128x64).
 pub const FRAMEBUFFER_SIZE: usize = SCREEN_WIDTH * PAGES;
 
-/// Framebuffer 1bpp au format pages SSD1306 (1 octet = 8 pixels verticaux).
+/// 1bpp framebuffer in SSD1306 page format (1 byte = 8 vertical pixels).
 ///
-/// Ne dépend ni d'I2C ni d'Embassy : les primitives de dessin
-/// (`graphics.rs`, `text.rs`) sont implémentées directement dessus.
+/// Depends on neither I2C nor Embassy: drawing primitives
+/// (`graphics.rs`, `text.rs`) are implemented directly on it.
 pub struct FrameBuffer {
     pub(crate) buf: [u8; FRAMEBUFFER_SIZE],
 }
 
 impl FrameBuffer {
-    /// Crée un framebuffer vide (noir).
+    /// Creates an empty (black) framebuffer.
     pub const fn new() -> Self {
         Self { buf: [0; FRAMEBUFFER_SIZE] }
     }
 
-    /// Efface le framebuffer (tout noir).
+    /// Clears the framebuffer (all black).
     pub fn clear(&mut self) {
         self.buf.fill(0x00);
     }
 
-    /// Remplit le framebuffer (tout blanc).
+    /// Fills the framebuffer (all white).
     pub fn fill(&mut self) {
         self.buf.fill(0xFF);
     }
 
-    /// Contenu brut du framebuffer.
+    /// Raw framebuffer contents.
     pub fn as_bytes(&self) -> &[u8; FRAMEBUFFER_SIZE] {
         &self.buf
     }
 
-    /// Octets d'une page (0..8), ou `None` si hors limites.
+    /// Bytes for a page (0..8), or `None` if out of bounds.
     pub fn page(&self, page: usize) -> Option<&[u8]> {
         self.buf.get(page * SCREEN_WIDTH..(page + 1) * SCREEN_WIDTH)
     }
 
-    /// Allume ou éteint un pixel. Les coordonnées hors écran sont ignorées.
+    /// Turns a pixel on or off. Coordinates outside the display are ignored.
     pub fn draw_pixel(&mut self, x: u8, y: u8, on: bool) {
         if x as usize >= SCREEN_WIDTH || y as usize >= SCREEN_HEIGHT {
             return;

@@ -1,4 +1,4 @@
-//! Driver I2C : initialisation du contrôleur et transfert du framebuffer.
+//! I2C driver: controller initialization and framebuffer transfer.
 
 use core::ops::{Deref, DerefMut};
 
@@ -9,13 +9,13 @@ use crate::command::*;
 use crate::framebuffer::FrameBuffer;
 use crate::{PAGES, SCREEN_WIDTH};
 
-/// Instance principale du driver SSD1306.
+/// Main instance of the SSD1306 driver.
 ///
-/// Se déréférence vers [`FrameBuffer`] : toutes les méthodes `draw_*`
-/// et `clear`/`fill` sont directement appelables sur `Ssd1306`.
+/// Dereferences to [`FrameBuffer`]: all `draw_*` methods and `clear`/`fill`
+/// can be called directly on `Ssd1306`.
 pub struct Ssd1306<I: I2c> {
     i2c: I,
-    /// Adresse I2C configurée (0x3C ou 0x3D).
+    /// Configured I2C address (0x3C or 0x3D).
     pub addr: u8,
     fb: FrameBuffer,
 }
@@ -34,20 +34,20 @@ impl<I: I2c> DerefMut for Ssd1306<I> {
 }
 
 impl<I: I2c> Ssd1306<I> {
-    /// Crée une nouvelle instance du driver.
+    /// Creates a new driver instance.
     ///
-    /// * `i2c`  : bus I2C (ou `I2cDevice` partagé).
-    /// * `addr` : adresse du composant (généralement 0x3C).
+    /// * `i2c`: I2C bus (or a shared `I2cDevice`).
+    /// * `addr`: device address (usually 0x3C).
     pub fn new(i2c: I, addr: u8) -> Self {
         Self { i2c, addr, fb: FrameBuffer::new() }
     }
 
-    /// Rend le bus I2C (utile pour le réutiliser ailleurs).
+    /// Returns the I2C bus (useful for reusing it elsewhere).
     pub fn release(self) -> I {
         self.i2c
     }
 
-    // ── Commandes bas niveau ────────────────────────────────────────────
+    // ── Low-level commands ──────────────────────────────────────────────
 
     async fn cmd(&mut self, c: u8) -> Result<(), I::Error> {
         self.i2c.write(self.addr, &[CONTROL_CMD, c]).await
@@ -61,21 +61,21 @@ impl<I: I2c> Ssd1306<I> {
         self.i2c.write(self.addr, &[CONTROL_CMD, c, d1, d2]).await
     }
 
-    // ── Init ────────────────────────────────────────────────────────────
+    // ── Initialization ─────────────────────────────────────────────────
 
-    /// Configure le SSD1306 et efface l'écran.
+    /// Configures the SSD1306 and clears the display.
     ///
-    /// Doit être appelé une fois avant toute opération d'affichage.
+    /// Must be called once before any display operation.
     pub async fn init(&mut self) -> Result<(), I::Error> {
         Timer::after_millis(200).await;
 
         self.cmd(DISPLAY_OFF).await?;
         self.cmd2(SET_OSC_FREQ, 0x80).await?;
-        self.cmd2(SET_MULTIPLEX, 0x3F).await?; // 64 lignes
+        self.cmd2(SET_MULTIPLEX, 0x3F).await?; // 64 rows
         self.cmd2(SET_DISPLAY_OFFSET, 0x00).await?;
         self.cmd(SET_START_LINE).await?;
-        self.cmd2(CHARGE_PUMP, 0x14).await?; // pompe de charge ON
-        self.cmd2(SET_MEMORY_MODE, 0x00).await?; // adressage horizontal
+        self.cmd2(CHARGE_PUMP, 0x14).await?; // Charge pump ON
+        self.cmd2(SET_MEMORY_MODE, 0x00).await?; // Horizontal addressing
         self.cmd(SEGMENT_REMAP).await?;
         self.cmd(COM_SCAN_DEC).await?;
         self.cmd2(SET_COM_PINS, 0x12).await?;
@@ -90,9 +90,9 @@ impl<I: I2c> Ssd1306<I> {
         self.flush().await
     }
 
-    // ── Flush ───────────────────────────────────────────────────────────
+    // ── Flush ──────────────────────────────────────────────────────────
 
-    /// Envoie le framebuffer complet vers l'écran, page par page.
+    /// Sends the entire framebuffer to the display, one page at a time.
     pub async fn flush(&mut self) -> Result<(), I::Error> {
         self.cmd3(SET_COLUMN_ADDR, 0, (SCREEN_WIDTH - 1) as u8).await?;
         self.cmd3(SET_PAGE_ADDR, 0, (PAGES - 1) as u8).await?;

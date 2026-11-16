@@ -1,26 +1,26 @@
-//! Primitives graphiques sur [`FrameBuffer`].
+//! Graphics primitives for [`FrameBuffer`].
 //!
-//! Les additions de coordonnées sont saturantes : un dessin qui dépasse
-//! l'écran est simplement rogné, sans panique ni débordement.
+//! Coordinate additions saturate: drawing beyond the display is simply clipped,
+//! without panics or overflow.
 
 use crate::framebuffer::FrameBuffer;
 
 impl FrameBuffer {
-    /// Dessine une ligne horizontale.
+    /// Draws a horizontal line.
     pub fn draw_hline(&mut self, x: u8, y: u8, w: u8, on: bool) {
         for i in 0..w {
             self.draw_pixel(x.saturating_add(i), y, on);
         }
     }
 
-    /// Dessine une ligne verticale.
+    /// Draws a vertical line.
     pub fn draw_vline(&mut self, x: u8, y: u8, h: u8, on: bool) {
         for i in 0..h {
             self.draw_pixel(x, y.saturating_add(i), on);
         }
     }
 
-    /// Dessine un rectangle vide.
+    /// Draws an unfilled rectangle.
     pub fn draw_rect(&mut self, x: u8, y: u8, w: u8, h: u8, on: bool) {
         if w == 0 || h == 0 {
             return;
@@ -31,16 +31,16 @@ impl FrameBuffer {
         self.draw_vline(x.saturating_add(w - 1), y, h, on);
     }
 
-    /// Dessine un rectangle plein.
+    /// Draws a filled rectangle.
     pub fn draw_filled_rect(&mut self, x: u8, y: u8, w: u8, h: u8, on: bool) {
         for row in 0..h {
             self.draw_hline(x, y.saturating_add(row), w, on);
         }
     }
 
-    /// Dessine un bitmap 1bpp (MSB à gauche).
+    /// Draws a 1bpp bitmap (MSB on the left).
     ///
-    /// `data` : chaque octet représente 8 pixels horizontaux consécutifs.
+    /// `data`: each byte represents 8 consecutive horizontal pixels.
     pub fn draw_bitmap(&mut self, x: u8, y: u8, w: u8, h: u8, data: &[u8]) {
         let stride = (w as usize + 7) / 8;
         for row in 0..h as usize {
