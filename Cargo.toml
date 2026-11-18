@@ -2,7 +2,7 @@
 [package]
 edition = "2024"
 name = "embassy-ssd1306"
-version = "0.7.2"
+version = "0.7.3"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
 build = false
 autolib = false
@@ -48,11 +48,8 @@ embassy-time-riscv = {
     default-features = false
 }
 
-# ============================================================
-# LOCAL PATCHES — DEVELOPMENT ONLY
-# ============================================================
-
-[patch.crates-io]
 embassy-time-driver-riscv = {
-    path = "../embassy-riscv/embassy-time-driver"
+    version = "0.1",
+    optional = true,
+    default-features = false
 }

@@ -25,9 +25,10 @@ dependencies = [
 
 [[package]]
 name = "embassy-ssd1306"
-version = "0.7.2"
+version = "0.7.3"
 dependencies = [
  "embassy-time",
+ "embassy-time-driver-riscv",
  "embassy-time-riscv",
  "embedded-hal-async",
 ]
@@ -60,6 +61,8 @@ dependencies = [
 [[package]]
 name = "embassy-time-driver-riscv"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f6d47929d0b15763ffacee2da30e4775abaa35b60a457cb613a64e7694a8fbe"
 dependencies = [
  "document-features",
 ]

@@ -33,7 +33,7 @@ optimized page-by-page I2C flush (pages 0 through 7).
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.7.2"
+embassy-ssd1306 = "0.7.3"
 ```
 
 Crate dependencies:
@@ -56,14 +56,14 @@ For ARM / Cortex-M, the default dependency configuration is sufficient:
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.7.2"
+embassy-ssd1306 = "0.7.3"
 ```
 
 For RISC-V, disable the default backend and enable `time-riscv`:
 
 ```toml
 [dependencies]
-embassy-ssd1306 = { version = "0.7.2", default-features = false, features = ["time-riscv"] }
+embassy-ssd1306 = { version = "0.7.3", default-features = false, features = ["time-riscv"] }
 ```
 
 Exactly one time backend must be enabled. For example, check an ARM build with:
@@ -195,6 +195,9 @@ to it, so `oled.draw_rect(...)` works directly.
 
 This project follows a pragmatic approach: each update adds useful functionality
 while minimizing memory usage on the microcontroller.
+
+**v0.7.3**: RISC-V support now uses the published `embassy-time-riscv` and
+`embassy-time-driver-riscv` crates from crates.io, instead of a local Cargo patch.
 
 **v0.7.2**: ARM/Cortex-M and RISC-V support with selectable Embassy time backends.
 
