@@ -25,9 +25,10 @@ dependencies = [
 
 [[package]]
 name = "embassy-ssd1306"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "embassy-time",
+ "embassy-time-riscv",
  "embedded-hal-async",
 ]
 
@@ -54,6 +55,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ee71af1b3a0deaa53eaf2d39252f83504c853646e472400b763060389b9fcc9"
 dependencies = [
  "document-features",
+]
+
+[[package]]
+name = "embassy-time-driver-riscv"
+version = "0.1.0"
+dependencies = [
+ "document-features",
+]
+
+[[package]]
+name = "embassy-time-riscv"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b49ced5e955b61614073eba62242fa90c702dbed29045c4610d0f7bb6ea11ef"
+dependencies = [
+ "critical-section",
+ "document-features",
+ "embassy-time-driver-riscv",
+ "embedded-hal 0.2.7",
+ "embedded-hal 1.0.0",
+ "embedded-hal-async",
+ "futures-core",
 ]
 
 [[package]]
@@ -89,9 +112,9 @@ checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
 
 [[package]]
 name = "litrs"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
+checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
 
 [[package]]
 name = "nb"

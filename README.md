@@ -33,14 +33,50 @@ optimized page-by-page I2C flush (pages 0 through 7).
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.7.1"
+embassy-ssd1306 = "0.7.2"
 ```
 
 Crate dependencies:
 
 ```toml
-embassy-time = "0.5"
 embedded-hal-async = "1.0"
+```
+
+## Architecture and Embassy time backend
+
+The driver supports ARM/Cortex-M and RISC-V targets. Select the Embassy time
+backend that matches your target:
+
+| Target family | Cargo feature | Backend |
+|---|---|---|
+| ARM / Cortex-M | `time-upstream` (default) | Official `embassy-time` |
+| RISC-V | `time-riscv` | `embassy-time-riscv` |
+
+For ARM / Cortex-M, the default dependency configuration is sufficient:
+
+```toml
+[dependencies]
+embassy-ssd1306 = "0.7.2"
+```
+
+For RISC-V, disable the default backend and enable `time-riscv`:
+
+```toml
+[dependencies]
+embassy-ssd1306 = { version = "0.7.2", default-features = false, features = ["time-riscv"] }
+```
+
+Exactly one time backend must be enabled. For example, check an ARM build with:
+
+```sh
+cargo check --target thumbv7em-none-eabihf
+```
+
+And a RISC-V build with:
+
+```sh
+cargo check --target riscv32imac-unknown-none-elf \
+  --no-default-features --features time-riscv
 ```
 
 ## Quick start
@@ -159,6 +195,8 @@ to it, so `oled.draw_rect(...)` works directly.
 
 This project follows a pragmatic approach: each update adds useful functionality
 while minimizing memory usage on the microcontroller.
+
+**v0.7.2**: ARM/Cortex-M and RISC-V support with selectable Embassy time backends.
 
 **v0.7.1**: documentation translated into English.
 

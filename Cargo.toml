@@ -1,7 +1,8 @@
+
 [package]
 edition = "2024"
 name = "embassy-ssd1306"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
 build = false
 autolib = false
@@ -12,18 +13,8 @@ autobenches = false
 description = "Async no_std driver for the SSD1306 OLED display over I2C, based on Embassy."
 documentation = "https://docs.rs/embassy-ssd1306"
 readme = "README.md"
-keywords = [
-    "embassy",
-    "ssd1306",
-    "oled",
-    "no-std",
-    "embedded",
-]
-categories = [
-    "embedded",
-    "no-std",
-    "hardware-support",
-]
+keywords = ["embassy", "ssd1306", "oled", "no-std", "hardware-support"]
+categories = ["embedded", "no-std", "hardware-support"]
 license = "GPL-2.0-or-later"
 repository = "https://github.com/jorgeandrecastro/embassy-ssd1306"
 
@@ -31,15 +22,37 @@ repository = "https://github.com/jorgeandrecastro/embassy-ssd1306"
 name = "embassy_ssd1306"
 path = "src/lib.rs"
 
-[dependencies.embassy-time]
-version = "0.5"
+[features]
+# ARM / Cortex-M: official Embassy backend
+default = ["time-upstream"]
+time-upstream = ["dep:embassy-time"]
 
-[dependencies.embedded-hal-async]
-version = "1.0"
+# RP2350 Hazard3 RISC-V: custom Embassy fork
+time-riscv = ["dep:embassy-time-riscv"]
 
-[profile.release]
-opt-level = "z"
-lto = true
-codegen-units = 1
-panic = "abort"
-strip = true
+[dependencies]
+embedded-hal-async = "1.0"
+
+# Official Embassy time backend
+embassy-time = {
+    version = "0.5",
+    optional = true,
+    default-features = false
+}
+
+# Custom RISC-V backend
+embassy-time-riscv = {
+    package = "embassy-time-riscv",
+    version = "0.1.2",
+    optional = true,
+    default-features = false
+}
+
+# ============================================================
+# LOCAL PATCHES — DEVELOPMENT ONLY
+# ============================================================
+
+[patch.crates-io]
+embassy-time-driver-riscv = {
+    path = "../embassy-riscv/embassy-time-driver"
+}

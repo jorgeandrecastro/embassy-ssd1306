@@ -7,6 +7,14 @@ resources of microcontrollers (RAM/Flash).
 All notable changes to `embassy-ssd1306` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.2]
+
+### Changed
+- Documented RISC-V support by patching `embassy-time` to
+  `embassy-time-riscv = "0.1"` in the consuming application.
+- Restored the standard `embassy-time = "0.5"` dependency to avoid native
+  `embassy-time` driver conflicts between upstream and RISC-V implementations.
+
 ## [0.7.1]
 
 ### Changed
