@@ -29,18 +29,6 @@ optimized page-by-page I2C flush (pages 0 through 7).
   the constants from `font::` (`font::LAMBDA`, `font::THETA`, `font::DOT`...).
 - Other uppercase Greek letters (`Π`, `Λ`, `Θ`, `Φ`...) are not currently supported.
 
-## Installation
-
-```toml
-[dependencies]
-embassy-ssd1306 = "0.7.3"
-```
-
-Crate dependencies:
-
-```toml
-embedded-hal-async = "1.0"
-```
 
 ## Architecture and Embassy time backend
 
@@ -56,14 +44,14 @@ For ARM / Cortex-M, the default dependency configuration is sufficient:
 
 ```toml
 [dependencies]
-embassy-ssd1306 = "0.7.3"
+embassy-ssd1306 = "0.7"
 ```
 
 For RISC-V, disable the default backend and enable `time-riscv`:
 
 ```toml
 [dependencies]
-embassy-ssd1306 = { version = "0.7.3", default-features = false, features = ["time-riscv"] }
+embassy-ssd1306 = { version = "0.7", default-features = false, features = ["time-riscv"] }
 ```
 
 Exactly one time backend must be enabled. For example, check an ARM build with:
@@ -196,24 +184,15 @@ to it, so `oled.draw_rect(...)` works directly.
 This project follows a pragmatic approach: each update adds useful functionality
 while minimizing memory usage on the microcontroller.
 
+**v0.7.4**: Readme fix and cargo toml fix.
+
 **v0.7.3**: RISC-V support now uses the published `embassy-time-riscv` and
 `embassy-time-driver-riscv` crates from crates.io, instead of a local Cargo patch.
-
-**v0.7.2**: ARM/Cortex-M and RISC-V support with selectable Embassy time backends.
-
-**v0.7.1**: documentation translated into English.
-
-**v0.7.0**: modular reorganization, 34 new glyphs (ASCII symbols, mathematical
-operators, Greek letters), `draw_text` (UTF-8), named glyph constants, overflow fixes.
-
-**v0.6.0**: new glyphs `^` `#` `@` `&` `"`.
-
-**v0.5.0**: explicit dependency versions for reproducible builds.
-
-**v0.4.0**: operators `+` `/` `|` `_`.
 
 The full changelog for all versions is available in 👉 [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-GPL-2.0-or-later — Copyright (C) 2026 Jorge Andre Castro
+GPL-2.0-or-later 
+
+Copyright (C) 2026 Jorge Andre Castro

@@ -7,6 +7,10 @@ resources of microcontrollers (RAM/Flash).
 All notable changes to `embassy-ssd1306` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.4]
+
+- Readme fix and cargo toml fix.
+
 ## [0.7.3]
 
 ### Changed
